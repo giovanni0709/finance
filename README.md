@@ -107,3 +107,11 @@ npm run test:e2e
 ```
 
 I test avviano autonomamente il server sulla porta 3100 con un database temporaneo separato, senza modificare i dati personali. Nell’ambiente cloud è stato usato Chromium di sistema tramite `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium`. Questa variabile non serve usando il browser installato da Playwright su Windows.
+
+## Modalità scura
+
+Il pulsante con luna/sole nella barra superiore passa tra tema chiaro e scuro, anche da smartphone. Al primo accesso viene rispettato il tema del sistema operativo; una scelta esplicita è ricordata in questo browser tramite localStorage e prevale sul sistema. Non modifica il database e non è inclusa nei backup finanziari. Se il browser impedisce il salvataggio delle preferenze, il selettore continua a funzionare per la pagina aperta.
+
+### Aggiornare una copia installata da ZIP
+
+Prima di aggiornare scarica un backup JSON da **Dati e backup**. Arresta il server con `Ctrl+C`. Scarica lo ZIP aggiornato da GitHub e copia i file di progetto nella cartella esistente, senza eliminare o sostituire la tua cartella `data`. Non copiare `node_modules` o `.next` da altri PC. Per il solo aggiornamento del tema basta copiare la cartella `app` dello ZIP nella cartella dell’app esistente, unendo le cartelle e sostituendo i file quando richiesto; questo non tocca il database. Poi esegui `npm run build` e `npm start`, infine aggiorna il browser con `Ctrl+F5`.

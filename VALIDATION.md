@@ -20,3 +20,9 @@ Le verifiche browser usano un archivio temporaneo; nessuna informazione bancaria
 Applicazione personale locale senza autenticazione, collegamenti bancari o prezzi live. Abbonamenti e PAC non generano movimenti automatici. Lo storico patrimoniale usa le valutazioni attuali degli investimenti, non quotazioni storiche. Esportazione/importazione Excel e CSV limitata ai movimenti; il backup JSON comprende l’intero archivio. Il salvataggio SQLite è automatico, i backup esterni sono manuali. Accesso smartphone verificato tramite viewport emulato, non su dispositivo fisico o firewall Windows.
 
 Nessun push GitHub, deployment pubblico o pubblicazione della configurazione cloud eseguito.
+
+## Aggiornamento tema — 6 novembre 2026
+
+Tema chiaro/scuro con preferenza del sistema al primo accesso e scelta esplicita persistita nel browser. La build di produzione, comprensiva di TypeScript, è riuscita. Il test browser aggiunto verifica preferenza iniziale, passaggio chiaro/scuro, persistenza dopo ricaricamento, colori di pannelli e modali, selettore accessibile su smartphone e assenza di modifiche all’archivio finanziario.
+
+Esecuzione finale: **4 test browser passati**, 0 falliti o saltati, inclusi i tre flussi precedenti. Verifica visiva aggiuntiva tramite screenshot desktop e mobile del tema scuro.

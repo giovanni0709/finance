@@ -4,3 +4,48 @@
 @media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.stat-number{font-size:29px}.dashboard-grid{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}.page-heading{align-items:flex-start}h1{font-size:29px}.heading-actions{max-width:190px}.panel-head input{max-width:225px}.top-status{font-size:0}.summary-strip{gap:30px;flex-wrap:wrap}.summary-strip strong{font-size:24px}.chart{height:250px}}
 @media(max-width:650px){.sidebar{transform:translateX(-100%);width:240px;transition:transform .2s}.sidebar.open{transform:translateX(0)}.workspace{width:100%;margin:0}.mobile-menu{display:flex}.topbar{height:62px;padding:0 17px}.breadcrumb{gap:10px}.top-status{gap:0}.top-status .status-dot{display:none}main{padding:25px 17px 10px}.page-heading{display:block;margin-bottom:15px}.eyebrow{font-size:8px;margin-bottom:10px}.page-heading p{font-size:12px}.heading-actions{max-width:none;justify-content:space-between;margin-top:23px;gap:8px}.heading-actions .primary{flex:1}.demo-note{font-size:8px;line-height:1.7;margin:17px 0}.stats{gap:10px;margin-bottom:15px}.stat{padding:15px 12px;min-height:133px}.stat-number{font-size:24px;letter-spacing:-.8px;margin-top:8px}.stat-title{font-size:10px}.stat-foot{font-size:8px;margin-top:10px}.stat-icon{width:23px;height:23px}.pill{font-size:8px}.panel{padding:19px 16px}.panel-head h2{font-size:14px}.panel-head p{font-size:9px}.panel-head input{max-width:160px;font-size:11px}.dashboard-grid{gap:15px;margin-bottom:15px}.chart{height:220px}.table-wrap{margin:0 -3px}td{font-size:11px}td .tag{font-size:8px}footer{font-size:8px}footer span:last-child{display:none}.summary-strip{gap:24px;font-size:11px}.summary-strip strong{font-size:23px}.modal-backdrop{padding:12px}.modal{padding:22px}.forecast .panel-head{display:block}.forecast label{display:block;margin-top:15px}.heading-actions input[type=month]{max-width:160px}.card-grid{gap:15px}.large-value{font-size:29px}.page-heading h1{font-size:31px}.spending-total{margin-top:15px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* Shared chart surfaces and a browser-local light/dark preference. */
+:root{color-scheme:light;--surface:#fff;--chart-line:#25876a}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:7px;padding:8px 10px;margin-right:12px;font-size:11px;line-height:1.2;white-space:nowrap;min-height:35px}
+.theme-toggle:hover{border-color:var(--green)}
+.theme-toggle:focus-visible{outline:2px solid var(--chart-line)}
+.recharts-cartesian-axis-tick text{fill:var(--muted)}
+:root[data-theme=dark]{color-scheme:dark;--ink:#e0ece5;--muted:#a5b9ad;--green:#76caa6;--border:#31463c;--bg:#101a16;--sidebar:#15221c;--surface:#1b2b23;--chart-line:#79cba8}
+[data-theme=dark] p{color:#b0c1b5}
+[data-theme=dark] .panel,[data-theme=dark] .stat,[data-theme=dark] .modal,[data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] .secondary{background:var(--surface);color:var(--ink);border-color:var(--border)}
+[data-theme=dark] .topbar{background:var(--sidebar)}
+[data-theme=dark] nav button{color:#b1c5b7}
+[data-theme=dark] nav button.active{background:#294738;color:#a4e5bf}
+[data-theme=dark] nav button:hover,[data-theme=dark] .secondary:hover,[data-theme=dark] .icon:hover{background:#2c4235}
+[data-theme=dark] nav .count,[data-theme=dark] .avatar{background:#314b39;color:#c7dfbd}
+[data-theme=dark] .brand-dot,[data-theme=dark] .positive,[data-theme=dark] .text-button{color:#90d6ae}
+[data-theme=dark] .primary{background:#367f5d;color:#fff}
+[data-theme=dark] .primary:hover{background:#40936b}
+[data-theme=dark] .featured{background:#235e47;border-color:#397d5f;color:#f4fff6}
+[data-theme=dark] .featured .stat-title,[data-theme=dark] .featured .stat-foot{color:#cce7d4}
+[data-theme=dark] .pill,[data-theme=dark] .green{background:#294435;color:#b2dfb8}
+[data-theme=dark] .coral{background:#49362d;color:#e8b795}
+[data-theme=dark] .tag{background:#26392d;border-color:#3b5340;color:#c2d0ba}
+[data-theme=dark] .bank-icon,[data-theme=dark] .transaction-icon.income{background:#2b4635;color:#afe0b9}
+[data-theme=dark] .bank-1,[data-theme=dark] .transaction-icon{background:#423c2c;color:#dac79e}
+[data-theme=dark] .bank-2,[data-theme=dark] .transaction-icon.transfer{background:#2c3c47;color:#b1ccd9}
+[data-theme=dark] progress,[data-theme=dark] progress::-webkit-progress-bar{background:#344738}
+[data-theme=dark] progress::-webkit-progress-value{background:#80b993}
+[data-theme=dark] progress::-moz-progress-bar{background:#80b993}
+[data-theme=dark] .panel-total,[data-theme=dark] td,[data-theme=dark] th{border-color:var(--border)}
+[data-theme=dark] .summary-strip strong{color:var(--ink)}
+[data-theme=dark] .success{background:#243f2d;color:#c5eacb}
+[data-theme=dark] .error{color:#ffb3a6}
+[data-theme=dark] .alert.error{background:#422b28;border-color:#805045}
+[data-theme=dark] .danger:hover{background:#4c302b;color:#ffb3a6}
+[data-theme=dark] .import-preview{background:#24382c}
+[data-theme=dark] .modal-backdrop{background:#030b08b3}
+[data-theme=dark] .scrim{background:#030b08b3}
+[data-theme=dark] .loading{color:#a4d3b5}
+[data-theme=dark] .loading button{background:#2f4c36;color:#ddf4e0}
+[data-theme=dark] .stat-title,[data-theme=dark] .stat-foot,[data-theme=dark] .muted,[data-theme=dark] .eyebrow,[data-theme=dark] .demo-note,[data-theme=dark] .top-status,[data-theme=dark] .breadcrumb,[data-theme=dark] .nav-label,[data-theme=dark] .local-badge,[data-theme=dark] .profile small,[data-theme=dark] .help,[data-theme=dark] .chart-caption,[data-theme=dark] .legend,[data-theme=dark] .category-list span,[data-theme=dark] .category-list small,[data-theme=dark] .spending-total span,[data-theme=dark] .account-row small,[data-theme=dark] .panel-total>span,[data-theme=dark] .goal-summary small,[data-theme=dark] .goal-summary span,[data-theme=dark] .goal-summary em,[data-theme=dark] .account-card>small,[data-theme=dark] td small,[data-theme=dark] th,[data-theme=dark] footer,[data-theme=dark] .modal .field,[data-theme=dark] .forecast label,[data-theme=dark] .large-value small,[data-theme=dark] .icon,[data-theme=dark] .empty{color:#adc0b1}
+[data-theme=dark] .breadcrumb strong{color:#d3e5d8}
+[data-theme=dark] .overdue{color:#e8bf85}
+[data-theme=dark] .recharts-tooltip-cursor{fill:#8cb99d18;stroke:#a5b9ad}
+@media(max-width:650px){.theme-toggle{margin-right:0;padding:8px}.theme-toggle span{display:none}}

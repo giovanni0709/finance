@@ -41,3 +41,21 @@ test('smartphone: menu, sezioni e creazione obiettivo senza overflow',async({pag
  const dialog=page.getByRole('dialog');await dialog.getByLabel('Nome obiettivo').fill('Viaggio test');await dialog.getByLabel('Importo obiettivo (€)').fill('2000');await dialog.getByLabel('Già accantonato (€)').fill('200');await dialog.getByRole('button',{name:'Salva obiettivo'}).click();await expect(dialog).not.toBeVisible();await expect(page.getByRole('heading',{name:'Viaggio test'})).toBeVisible();
  await page.getByRole('button',{name:'Apri menu'}).click();await page.getByRole('navigation').getByRole('button',{name:/Dati e backup/}).click();await expect(page.getByRole('heading',{name:'Backup completo'})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
 });
+
+test('tema scuro: preferenza di sistema, selettore persistente e layout mobile',async({page,request},testInfo)=>{
+ await page.emulateMedia({colorScheme:'dark'});
+ await page.goto('/');await expect(page.getByRole('heading',{name:'Una visione chiara.'})).toBeVisible();
+ await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+ const before=await (await request.get('/api/data')).json();
+ await expect(page.getByRole('button',{name:'Attiva modalità chiara'})).toHaveAttribute('aria-pressed','true');
+ await page.getByRole('button',{name:'Attiva modalità chiara'}).click();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+ await page.reload();await expect(page.getByRole('button',{name:'Attiva modalità scura'})).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+ await page.getByRole('button',{name:'Attiva modalità scura'}).click();await page.reload();await expect(page.getByRole('button',{name:'Attiva modalità chiara'})).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+ await expect(page.locator('.panel').first()).toHaveCSS('background-color','rgb(27, 43, 35)');
+ await page.screenshot({path:testInfo.outputPath('dark-desktop.png'),fullPage:true});
+ await page.setViewportSize({width:390,height:844});await expect(page.getByRole('button',{name:'Attiva modalità chiara'})).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCSS('background-color','rgb(27, 43, 35)');await page.getByRole('button',{name:'Chiudi',exact:true}).click();
+ await page.screenshot({path:testInfo.outputPath('dark-mobile.png'),fullPage:true});
+ expect(await (await request.get('/api/data')).json()).toEqual(before);
+});
