@@ -1,7 +1,26 @@
 import { test, expect } from '@playwright/test';
 import ExcelJS from 'exceljs';
 import { randomUUID } from 'node:crypto';
+import { seed as demo } from '../tests/fixtures/demo';
 const origin='http://127.0.0.1:3100';
+
+test.beforeEach(async({request},testInfo)=>{
+ if(testInfo.title.startsWith('nuovo archivio'))return;
+ const current=await (await request.get('/api/data')).json();
+ const result=await request.put('/api/data',{headers:{origin},data:{state:demo(),revision:current.revision}});
+ expect(result.status()).toBe(200);
+});
+
+test('nuovo archivio: nessun dato demo e primo conto a zero',async({page,request})=>{
+ const current=await (await request.get('/api/data')).json();
+ for(const rows of Object.values(current.state))expect(rows).toEqual([]);
+ await page.goto('/');await expect(page.getByRole('button',{name:'Crea primo conto'})).toBeVisible();
+ await expect(page.locator('.stats .stat-number')).toHaveText(['0,00 €','0,00 €','0,00 €','0,00 €']);
+ await expect(page.getByText('Nessuna uscita, per ora')).toBeVisible();
+ await page.getByRole('button',{name:'Crea primo conto'}).click();const d=page.getByRole('dialog');
+ await d.getByLabel('Nome del conto').fill('Il mio conto');await d.getByLabel('Banca o istituto').fill('La mia banca');await d.getByRole('button',{name:'Salva conto'}).click();await expect(d).not.toBeVisible();
+ await page.reload();await expect(page.getByText('Il mio conto',{exact:true})).toBeVisible();await expect(page.locator('.stats .stat-number').first()).toHaveText('0,00 €');
+});
 
 test('desktop: crea conto, entrata, trasferimento, modifica e persistenza',async({page},testInfo)=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -51,11 +70,32 @@ test('tema scuro: preferenza di sistema, selettore persistente e layout mobile',
  await page.getByRole('button',{name:'Attiva modalità chiara'}).click();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  await page.reload();await expect(page.getByRole('button',{name:'Attiva modalità scura'})).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  await page.getByRole('button',{name:'Attiva modalità scura'}).click();await page.reload();await expect(page.getByRole('button',{name:'Attiva modalità chiara'})).toBeVisible();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
- await expect(page.locator('.panel').first()).toHaveCSS('background-color','rgb(27, 43, 35)');
+ await expect(page.locator('.panel').first()).toHaveCSS('background-color','rgb(25, 33, 45)');
  await page.screenshot({path:testInfo.outputPath('dark-desktop.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});await expect(page.getByRole('button',{name:'Attiva modalità chiara'})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
- await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCSS('background-color','rgb(27, 43, 35)');await page.getByRole('button',{name:'Chiudi',exact:true}).click();
+ await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCSS('background-color','rgb(25, 33, 45)');await page.getByRole('button',{name:'Chiudi',exact:true}).click();
  await page.screenshot({path:testInfo.outputPath('dark-mobile.png'),fullPage:true});
  expect(await (await request.get('/api/data')).json()).toEqual(before);
+});
+
+
+test('azzeramento esplicito: annulla, conferma digitata e persistenza senza demo',async({page,request})=>{
+ await page.goto('/');await page.getByRole('navigation').getByRole('button',{name:'Dati e backup',exact:true}).click();
+ const before=await (await request.get('/api/data')).json();await page.getByRole('button',{name:'Azzera archivio',exact:true}).click();const d=page.getByRole('dialog');
+ await expect(d.getByRole('button',{name:'Conferma azzeramento'})).toBeDisabled();await d.getByLabel('Scrivi AZZERA per confermare').fill('NO');await expect(d.getByRole('button',{name:'Conferma azzeramento'})).toBeDisabled();await d.getByRole('button',{name:'Annulla'}).click();
+ expect(await (await request.get('/api/data')).json()).toEqual(before);
+ await page.getByRole('button',{name:'Azzera archivio',exact:true}).click();await expect(d.getByRole('link',{name:'Scarica backup prima di procedere'})).toBeVisible();await d.getByLabel('Scrivi AZZERA per confermare').fill('AZZERA');await d.getByRole('button',{name:'Conferma azzeramento'}).click();await expect(d).not.toBeVisible();await expect(page.getByRole('button',{name:'Crea primo conto'})).toBeVisible();
+ await page.reload();const after=await (await request.get('/api/data')).json();for(const rows of Object.values(after.state))expect(rows).toEqual([]);await expect(page.locator('.stats .stat-number').first()).toHaveText('0,00 €');
+});
+
+test('categorie selezionabili, personalizzate persistenti e grafico a torta',async({page},testInfo)=>{
+ await page.goto('/');await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();const d=page.getByRole('dialog');
+ await d.getByLabel('Descrizione',{exact:true}).fill('Assicurazione auto test');await d.getByLabel('Importo (€)').fill('25');await d.getByLabel('Categoria',{exact:true}).selectOption('Auto');await d.getByRole('button',{name:'Salva movimento'}).click();await expect(d).not.toBeVisible();
+ await expect(page.getByRole('img',{name:/Grafico a torta delle uscite:/})).toHaveAttribute('aria-label',/Auto 25,00/);
+ await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();await d.getByLabel('Descrizione',{exact:true}).fill('Corso test');await d.getByLabel('Importo (€)').fill('18');await d.getByLabel('Categoria',{exact:true}).selectOption('__new__');await d.getByLabel('Nome nuova categoria').fill('Formazione');await d.getByRole('button',{name:'Salva movimento'}).click();await expect(d).not.toBeVisible();
+ await page.reload();await page.getByRole('button',{name:'Nuovo movimento',exact:true}).click();await expect(d.getByLabel('Categoria',{exact:true}).locator('option',{hasText:'Formazione'})).toHaveCount(1);await d.getByRole('button',{name:'Chiudi',exact:true}).click();
+ await expect(page.getByRole('img',{name:/Grafico a torta delle uscite:/})).toHaveAttribute('aria-label',/Formazione 18,00/);
+ await expect(page.locator('.recent-panel tbody tr')).toHaveCount(3);
+ await page.screenshot({path:testInfo.outputPath('overview-light.png'),fullPage:true});await page.getByRole('button',{name:'Attiva modalità scura'}).click();await page.screenshot({path:testInfo.outputPath('overview-dark.png'),fullPage:true});
 });

@@ -1,6 +1,6 @@
 # My Finance
 
-Applicazione personale in italiano per conti, movimenti, risparmi e investimenti. MVP locale, gratuito e senza servizi bancari esterni. L’archivio iniziale contiene esclusivamente dati fittizi.
+Applicazione personale in italiano per conti, movimenti, risparmi e investimenti. MVP locale, gratuito e senza servizi bancari esterni. L’archivio iniziale è vuoto: nessun conto o movimento preimpostato, tutti i totali partono da zero.
 
 ## Architettura
 
@@ -9,7 +9,7 @@ Applicazione personale in italiano per conti, movimenti, risparmi e investimenti
 - **Zod**: validazione condivisa; denaro in centesimi interi.
 - **Recharts**: grafici interattivi; **ExcelJS**: scambio XLSX/CSV.
 - Archivio SQLite come documento JSON validato con revisione incrementale: aggiornamento atomico e controllo dei conflitti tra finestre. Scelta semplice per un singolo utente; non un sistema contabile multiutente.
-- Modello e calcoli in `lib/model.ts`, persistenza in `lib/db.ts`, scambio dati in `lib/exchange.ts`, dati fittizi in `lib/seed.ts`, API in `app/api`, interfaccia in `app/page.tsx` e `app/globals.css`.
+- Modello e calcoli in `lib/model.ts`, persistenza in `lib/db.ts`, scambio dati in `lib/exchange.ts`, archivio iniziale vuoto in `lib/seed.ts` (fixture dimostrativa soltanto nei test), API in `app/api`, interfaccia in `app/page.tsx` e `app/globals.css`.
 
 ## Avvio su Windows
 
@@ -48,13 +48,15 @@ Apri sul telefono `http://INDIRIZZO_IPV4_DEL_PC:3000`. Consenti eventualmente No
 ## Utilizzo
 
 - **Conti**: crea/modifica i conti e il saldo iniziale, poi registra i movimenti. Un conto utilizzato non può essere eliminato finché esistono riferimenti.
-- **Movimenti**: entrata, uscita o trasferimento tra due conti distinti. Le categorie sono personalizzabili. I trasferimenti non cambiano patrimonio o risparmio mensile. Le date future sono indicate come previste ed escluse dai saldi odierni e dai totali della dashboard. Le uscite possono portare il saldo sotto zero.
+- **Movimenti**: entrata, uscita o trasferimento tra due conti distinti. Le categorie si scelgono da un menu (Casa, Auto, Lavoro, Investimenti, Divertimento e altre). Seleziona **+ Nuova categoria…** per crearne una: dopo il salvataggio del movimento sarà disponibile anche per quelli successivi e inclusa nei backup dei movimenti. Le categorie personalizzate sono ricavate dai movimenti esistenti. I trasferimenti non cambiano patrimonio o risparmio mensile. Le date future sono indicate come previste ed escluse dai saldi odierni e dai totali della dashboard. Le uscite possono portare il saldo sotto zero.
 - **Investimenti**: ETF, azioni, PAC e TFR con capitale versato, valutazione manuale e rata mensile prevista. Nessuna quotazione o negoziazione automatica. Un versamento va registrato anche come uscita dal conto e aggiornamento del capitale investito; diversamente il capitale viene contato due volte. PAC e TFR sono posizioni separate, da non duplicare negli ETF sottostanti.
 - **Obiettivi**: matrimonio, casa o nomi personalizzati. Gli importi accantonati rappresentano denaro già nei conti, non si sommano al patrimonio.
 - **Abbonamenti**: costo, periodicità e prossima scadenza. Promemoria manuali: pagamenti e rinnovi non sono registrati automaticamente.
 - **Grafici**: andamento della liquidità storica sommata al valore attuale degli investimenti; non è uno storico delle quotazioni. Proiezione quinquennale basata su rendimento ipotetico modificabile e versamenti mensili, senza tasse/costi/inflazione. Non è una previsione garantita.
 
-Per passare dai dati demo ai tuoi dati: scarica prima un backup, elimina i movimenti e gli abbonamenti dimostrativi, quindi modifica o elimina conti, investimenti e obiettivi. Le eliminazioni richiedono conferma.
+Le nuove installazioni partono da zero. Gli aggiornamenti non cancellano né sostituiscono archivi esistenti. Se usi una versione precedente con dati dimostrativi, vai in **Dati e backup → Azzera archivio**, scarica un backup e scrivi **AZZERA** per confermare. L’operazione elimina **tutti** i conti, movimenti, abbonamenti, investimenti e obiettivi, anche quelli personali. Puoi annullare prima della conferma. Il recupero richiede un backup JSON precedente.
+
+Il saldo attuale è saldo iniziale + entrate − uscite ± trasferimenti. Impostare il saldo iniziale a zero non elimina i movimenti. I conti con movimenti o abbonamenti collegati non possono essere eliminati singolarmente: elimina/riassegna prima i riferimenti, oppure usa l’azzeramento esplicito se vuoi svuotare tutto.
 
 ## Importazione ed esportazione
 
@@ -114,4 +116,9 @@ Il pulsante con luna/sole nella barra superiore passa tra tema chiaro e scuro, a
 
 ### Aggiornare una copia installata da ZIP
 
-Prima di aggiornare scarica un backup JSON da **Dati e backup**. Arresta il server con `Ctrl+C`. Scarica lo ZIP aggiornato da GitHub e copia i file di progetto nella cartella esistente, senza eliminare o sostituire la tua cartella `data`. Non copiare `node_modules` o `.next` da altri PC. Per il solo aggiornamento del tema basta copiare la cartella `app` dello ZIP nella cartella dell’app esistente, unendo le cartelle e sostituendo i file quando richiesto; questo non tocca il database. Poi esegui `npm run build` e `npm start`, infine aggiorna il browser con `Ctrl+F5`.
+Prima di aggiornare scarica un backup JSON da **Dati e backup**. Arresta il server con `Ctrl+C`. Scarica lo ZIP aggiornato da GitHub e copia i file di progetto nella cartella esistente, senza eliminare o sostituire la tua cartella `data`. Non copiare `node_modules` o `.next` da altri PC. Per aggiornare alla versione 0.2 copia le cartelle `app` e `lib` dello ZIP nella cartella dell’app esistente, unendo le cartelle e sostituendo i file quando richiesto; questo non tocca il database. Poi esegui `npm run build` e `npm start`, infine aggiorna il browser con `Ctrl+F5`.
+
+
+## Panoramica 0.2
+
+Grafico a ciambella interattivo delle uscite del mese selezionato con importi, percentuali e legenda per categoria. Entrate, trasferimenti e movimenti futuri sono esclusi. Se non ci sono uscite compare uno stato vuoto senza percentuali artificiali. Gli ultimi movimenti mostrano tre righe compatte; **Vedi tutti** apre l’elenco completo. Entrambi i temi usano superfici e tipografia più sobrie.

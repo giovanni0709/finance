@@ -5,7 +5,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { balances, cents, monthly, stateSchema, date } from '../lib/model';
-import { seed } from '../lib/seed';
+import { seed } from './fixtures/demo';
 import { ConflictError, openDatabase } from '../lib/db';
 import { csvDecode, csvEncode, headers, importRows, rows } from '../lib/exchange';
 
@@ -30,7 +30,7 @@ test('riferimenti invalidi, trasferimenti allo stesso conto e ID duplicati sono 
 });
 test('SQLite persiste dopo riapertura e protegge da salvataggi concorrenti',()=>{
  const dir=mkdtempSync(path.join(tmpdir(),'finance-'));const file=path.join(dir,'test.sqlite');let db=openDatabase(file);
- try{const first=db.read();first.state.accounts[0].name='Conto modificato';const updated=db.write(first.state,first.revision);assert.equal(updated.revision,1);assert.throws(()=>db.write(first.state,0),ConflictError);db.close();db=openDatabase(file);assert.equal(db.read().state.accounts[0].name,'Conto modificato');assert.equal(db.read().revision,1);
+ try{const first=db.read();first.state=seed();first.state.accounts[0].name='Conto modificato';const updated=db.write(first.state,first.revision);assert.equal(updated.revision,1);assert.throws(()=>db.write(first.state,0),ConflictError);db.close();db=openDatabase(file);assert.equal(db.read().state.accounts[0].name,'Conto modificato');assert.equal(db.read().revision,1);
  const backup=JSON.parse(JSON.stringify({version:1,state:db.read().state}));const restored=stateSchema.parse(backup.state);assert.deepEqual(db.write(restored,1).state,first.state);
  }finally{db.close();rmSync(dir,{recursive:true,force:true});}
 });
@@ -47,4 +47,9 @@ test('origine confrontata con Host: localhost, LAN e rifiuto siti esterni',()=>{
  for(const host of ['127.0.0.1:3000','localhost:3000','192.168.1.4:3000'])assert.equal(sameOrigin(new Request('http://localhost:3000/api/data',{headers:{host,origin:'http://'+host}})),true);
  assert.equal(sameOrigin(new Request('http://localhost:3000/api/data',{headers:{host:'127.0.0.1:3000',origin:'https://example.com'}})),false);
  assert.equal(sameOrigin(new Request('http://localhost:3000/api/data')),false);
+});
+
+import { seed as emptyArchive } from '../lib/seed';
+test('nuovo archivio a zero e aggiornamento senza sovrascrivere dati esistenti',()=>{
+ const db=openDatabase(':memory:');try{assert.deepEqual(db.read().state,emptyArchive());assert.equal(Object.values(balances(db.read().state)).reduce((a,b)=>a+b,0),0);const saved=db.write(seed(),0);assert.ok(saved.state.movements.length>0);const reset=db.write(emptyArchive(),saved.revision);assert.deepEqual(reset.state,emptyArchive());assert.equal(reset.revision,2);}finally{db.close();}
 });

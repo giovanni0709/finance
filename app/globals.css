@@ -49,3 +49,38 @@
 [data-theme=dark] .overdue{color:#e8bf85}
 [data-theme=dark] .recharts-tooltip-cursor{fill:#8cb99d18;stroke:#a5b9ad}
 @media(max-width:650px){.theme-toggle{margin-right:0;padding:8px}.theme-toggle span{display:none}}
+
+/* 0.2 — quieter surfaces, compact activity and category cash flow. */
+:root{--bg:#f3f5f9;--sidebar:#fafbfd;--ink:#202f3d;--border:#e2e8ef;--muted:#7c8998}
+body{font-family:"Segoe UI",Arial,Helvetica,sans-serif}
+h1{letter-spacing:-1.35px}h2{letter-spacing:-.35px}
+.panel,.stat{border-radius:15px;box-shadow:0 3px 18px #21364b04}
+.topbar{background:#fafbfde8}.sidebar{background:var(--sidebar)}
+.stat.featured{background:linear-gradient(125deg,#21654e,#2d8465);border-color:#2a785b}
+.stat-title{font-weight:500}.stat-number{letter-spacing:-1.2px}
+.primary{border-radius:9px;box-shadow:0 3px 9px #164b3320}
+.recent-panel{padding:18px 23px}.recent-panel .panel-head{margin-bottom:7px}
+.recent-panel td{padding-top:9px;padding-bottom:9px}
+.recent-panel .transaction-icon{height:28px;width:28px;border-radius:7px}
+.recent-panel td small{font-size:9px;margin-top:3px}
+.recent-panel .empty{padding:18px;font-size:12px}
+.donut-wrap{height:210px;position:relative;max-width:290px;margin:-3px auto 16px}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;pointer-events:none;gap:7px}
+.donut-center span{font-size:10px;color:var(--muted);letter-spacing:.3px}
+.donut-center strong{font-size:24px;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.spending-panel .category-list{gap:11px}.spending-panel .category-list>div{gap:9px}
+.spending-panel .category-list span{min-width:0;overflow-wrap:anywhere}
+.chart-empty{min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.chart-empty strong{font-size:13px}.chart-empty p{font-size:11px;max-width:240px}
+.empty-ring{height:125px;width:125px;border:19px solid var(--border);border-radius:50%;margin-bottom:5px}
+.inline-empty{padding:24px 0;font-size:12px;line-height:1.8}.inline-empty .text-button{margin-top:12px}
+.reset-button{color:#a44a43;border-color:#dcb8b2}.reset-confirm{background:#a3423b!important}
+:root[data-theme=dark]{--bg:#0e141e;--sidebar:#121b27;--surface:#19212d;--ink:#e3eaf4;--muted:#a1aec2;--border:#2c3748}
+[data-theme=dark] .panel,[data-theme=dark] .stat{box-shadow:0 3px 18px #0000000a}
+[data-theme=dark] .topbar{background:#121b27}
+[data-theme=dark] .featured{background:linear-gradient(125deg,#204a3f,#276e56);border-color:#33785e}
+[data-theme=dark] nav button.active{background:#233b3b;color:#a1e6cc}
+[data-theme=dark] nav button:hover,[data-theme=dark] .secondary:hover,[data-theme=dark] .icon:hover{background:#263547}
+[data-theme=dark] .theme-toggle{background:#1c2938}
+[data-theme=dark] .reset-button{color:#f2b0a8;border-color:#795350}
+@media(max-width:650px){.recent-panel{padding:16px}.recent-panel td{padding-top:8px;padding-bottom:8px}.donut-wrap{height:200px}.spending-panel .panel-head .tag{font-size:7px}.panel,.stat{border-radius:12px}}

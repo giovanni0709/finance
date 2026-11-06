@@ -26,7 +26,7 @@ export const stateSchema = z.object({
 });
 export type FinanceState = z.infer<typeof stateSchema>;
 export type Movement = z.infer<typeof movementSchema>;
-export const categories = ['Stipendio','Casa','Spesa','Trasporti','Ristoranti','Salute','Tempo libero','Abbonamenti','Altro'];
+export const categories = ['Casa','Auto','Lavoro','Investimenti','Divertimento','Spesa','Trasporti','Ristoranti','Salute','Abbonamenti','Stipendio','Tempo libero','Altro'];
 export const euro = (cents:number) => new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',useGrouping:'always'}).format(cents/100);
 export function cents(value: string): number {
   const normalized=value.trim().replace(',','.');

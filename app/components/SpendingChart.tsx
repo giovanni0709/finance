@@ -1,0 +1,8 @@
+'use client';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { euro } from '@/lib/model';
+const palette=['#4cbf9d','#7c8ee5','#e0ac68','#d881a6','#70b9d1','#a4bb73','#ae8fcb','#d28372'];
+export default function SpendingChart({spending,total}:{spending:[string,number][];total:number}){
+ const chart=spending.map(([name,value])=>({name,value}));
+ return <section className="panel spending-panel"><div className="panel-head"><div><h2>Uscite per categoria</h2><p>Distribuzione del mese selezionato</p></div><span className="tag">FLUSSO IN USCITA</span></div>{total>0?<><div className="donut-wrap" role="img" aria-label={`Grafico a torta delle uscite: ${spending.map(([n,v])=>`${n} ${euro(v)}`).join(', ')}`}><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={chart} dataKey="value" nameKey="name" innerRadius="68%" outerRadius="90%" paddingAngle={chart.length>1?3:0} stroke="none" isAnimationActive={false}>{chart.map((c,i)=><Cell key={c.name} fill={palette[i%palette.length]}/>)}</Pie><Tooltip formatter={v=>euro(Number(v))} contentStyle={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:10}} itemStyle={{color:'var(--ink)'}}/></PieChart></ResponsiveContainer><div className="donut-center"><span>Totale uscite</span><strong>{euro(total)}</strong></div></div><div className="category-list">{spending.map(([name,value],i)=><div key={name}><span><i style={{background:palette[i%palette.length]}}/>{name}</span><strong>{euro(value)}</strong><small>{Math.round(value/total*100)}%</small></div>)}</div></>:<div className="chart-empty"><div className="empty-ring"/><strong>Nessuna uscita, per ora</strong><p>Le spese compariranno qui quando registrerai i tuoi movimenti.</p></div>}</section>;
+}
